@@ -1015,6 +1015,12 @@ int picoquic_incoming_encrypted(
     size_t decoded_length = 0;
     int already_received = 0;
 
+    // update received spin value 
+    if (ph->pn64 > cnx->spin_max_pn_recv) {
+        cnx->spin_max_pn_recv = ph->pn64;
+        cnx->spin_recv = ph->spin;
+    }
+
     if (picoquic_compare_connection_id(&ph->cnx_id, &cnx->server_cnxid) != 0 && (!picoquic_is_connection_id_null(ph->cnx_id) || cnx->local_parameters.omit_connection_id == 0)) {
         ret = PICOQUIC_ERROR_CNXID_CHECK;
     } else if (

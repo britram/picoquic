@@ -492,7 +492,9 @@ typedef struct st_picoquic_cnx_t {
     int nb_path_alloc;
 
     /* Spin value */
-    int spin;
+    uint64_t spin_max_pn_recv;
+    int      spin_recv;
+
 } picoquic_cnx_t;
 
 /* Init of transport parameters */
