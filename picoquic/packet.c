@@ -201,18 +201,18 @@ int picoquic_parse_packet_header(
 
                 ph->pn_offset = ph->offset;
 
-                switch (bytes[0] & 0x1F) {
-                case 0x1F:
+                switch (bytes[0] & 0x0F) {
+                case 0x0F:
                     ph->pn = bytes[ph->offset];
                     ph->pnmask = 0xFFFFFFFFFFFFFF00ull;
                     ph->offset += 1;
                     break;
-                case 0x1E:
+                case 0x0E:
                     ph->pn = PICOPARSE_16(&bytes[ph->offset]);
                     ph->pnmask = 0xFFFFFFFFFFFF0000ull;
                     ph->offset += 2;
                     break;
-                case 0x1D:
+                case 0x0D:
                     ph->pn = PICOPARSE_32(&bytes[ph->offset]);
                     ph->pnmask = 0xFFFFFFFF00000000ull;
                     ph->offset += 4;
@@ -221,6 +221,10 @@ int picoquic_parse_packet_header(
                     ph->ptype = picoquic_packet_error;
                     break;
                 }
+
+                // extract the spin bit
+                ph->spin = bytes[0] & 0x10 ? 1 : 0;
+
                 break;
 
             case picoquic_version_header_10:
@@ -233,7 +237,7 @@ int picoquic_parse_packet_header(
 
                 ph->pn_offset = ph->offset;
 
-                switch (bytes[0] & 0x1F) {
+                switch (bytes[0] & 0x0F) {
                 case 0:
                     ph->pn = bytes[ph->offset];
                     ph->pnmask = 0xFFFFFFFFFFFFFF00ull;
@@ -253,6 +257,9 @@ int picoquic_parse_packet_header(
                     ph->ptype = picoquic_packet_error;
                     break;
                 }
+
+                // extract the spin bit
+                ph->spin = bytes[0] & 0x10 ? 1 : 0;
             }
 
             if (length < ph->offset) {

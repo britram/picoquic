@@ -490,6 +490,9 @@ typedef struct st_picoquic_cnx_t {
     picoquic_path_t ** path;
     int nb_paths;
     int nb_path_alloc;
+
+    /* Spin value */
+    int spin;
 } picoquic_cnx_t;
 
 /* Init of transport parameters */
@@ -561,6 +564,7 @@ typedef struct _picoquic_packet_header {
     picoquic_packet_type_enum ptype;
     uint64_t pnmask;
     uint64_t pn64;
+    int spin;
     int version_index;
 } picoquic_packet_header;
 
